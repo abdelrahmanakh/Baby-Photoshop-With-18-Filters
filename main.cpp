@@ -56,6 +56,104 @@ void flip_vertically(string image_name){
     system(name.c_str());
 }
 
+void invert_image(string image_name) {
+    cout << "Enter the name of the image along with its extension:";
+    cin >> image_name;
+
+    Image image(image_name);
+
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            unsigned int inv_r = 255 - image(i, j, 0);
+            unsigned int inv_g = 255 - image(i, j, 1);
+            unsigned int inv_b = 255 - image(i, j, 2);
+
+            image(i, j, 0) = inv_r;
+            image(i, j, 1) = inv_g;
+            image(i, j, 2) = inv_b;
+        }
+    }
+
+    cout << "Please enter image name to store the new image (with extension):\n";
+    cin >> image_name;
+    image.saveImage(image_name);
+
+}
+void rotateImage90(string image_name) {
+    Image image(image_name);
+
+    Image adjusted_img(image.height, image.width);
+
+
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            for (int k = 0; k < image.channels; ++k) {
+
+                int new_i = j;
+                int new_j = image.width - 1 - i;
+
+
+                adjusted_img(new_i, new_j, k) = image(i, j, k);
+            }
+        }
+    }
+
+
+    adjusted_img.saveImage(image_name);
+}
+
+void rotateImage180(string image_name) {
+
+    Image image(image_name);
+
+
+    Image adjusted_img(image.width, image.height);
+
+
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            for (int k = 0; k < image.channels; ++k) {
+
+                int new_i = image.width - 1 - i;
+                int new_j = image.height - 1 - j;
+
+
+                adjusted_img(new_i, new_j, k) = image(i, j, k);
+            }
+        }
+    }
+
+
+    adjusted_img.saveImage(image_name);
+}
+
+void rotateImage270(string image_name) {
+
+    Image image(image_name);
+
+
+    Image adjusted_img(image.height, image.width);
+
+
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            for (int k = 0; k < image.channels; ++k) {
+
+                int new_i = image.height - 1 - j;
+                int new_j = i;
+
+
+                adjusted_img(new_i, new_j, k) = image(i, j, k);
+            }
+        }
+    }
+
+
+    adjusted_img.saveImage(image_name);
+}
+
+
+
 int main() {
     flip_horizontally("arrow.jpg");
     return 0;
