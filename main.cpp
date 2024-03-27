@@ -1,3 +1,20 @@
+/*
+ * FCAI – Structured Programming – 2024 - Assignment 3 - Part 1
+ * Program Name: CS112_A3_Part1_S3_S4_20230593_20230587_20230794.cpp
+ * Program Description: Image Filter Program
+ * Last Modification Date: 27/03/2024
+ * Authors: Abdelrahman Ahmed Samir Mohamed Ali, 20230593, Group:A, Sec.no:3
+ *          Saleem Sami Saleem Aljerjawi, 20230794, Group:A, Sec.no:4
+ *          Mazen Mohamed Abdelsalam Ali Elsheikh, 20230587, Group:A, Sec.no:4
+ * TA:      Ahmed Foad Lotfy
+ * Who did what: Mazen: Menu & Grayscale Filter
+ *               Abdelrahman: flip  & black_and_white Filters
+ *               Saleem: Invert & Rotate Filters
+ * Emails:
+ *        Mazen: 11410120230587@stud.cu.edu.eg
+ *        Abdelrahman: 20230593@stud.fci-cu.edu.eg
+ *        Saleem: 20230794@stud.fci-cu.edu.eg
+*/
 #include <iostream>
 #include <cstdlib>
 #include "Image_Class.h"
