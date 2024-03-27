@@ -70,7 +70,7 @@ void black_and_white(Image &image, string imageName) {
 }
 
 void flip_horizontally(Image &image, string imageName) {
-    Image img = image, img2 = image;
+    Image img(imageName), img2(imageName);
     for (int i = 0, x = img2.width - 1; i < img2.width; i++, x--) {
         for (int j = 0; j < img2.height; j++) {
             for (int k = 0; k < 3; k++) {
@@ -83,7 +83,7 @@ void flip_horizontally(Image &image, string imageName) {
 }
 
 void flip_vertically(Image &image, string imageName) {
-    Image img = image, img2 = image;
+    Image img (imageName), img2 (imageName);
     for (int i = 0; i < img2.width; i++) {
         for (int j = 0, y = img.height - 1; j < img2.height; j++, y--) {
             for (int k = 0; k < 3; k++) {
