@@ -7,7 +7,7 @@
  *          Saleem Sami Saleem Aljerjawi, 20230794, Group:A, Sec.no:4
  *          Mazen Mohamed Abdelsalam Ali Elsheikh, 20230587, Group:A, Sec.no:4
  * TA:      Ahmed Foad Lotfy
- * Who did what: Mazen: Menu & Grayscale Filter
+ * Who did what: Mazen: The Menu of the previous delivery & Print function & Grayscale Filter & Lighten and Darken filter
  *               Abdelrahman: flip  & black_and_white Filters
  *               Saleem: Invert & Rotate Filters
  * Emails:
@@ -100,7 +100,7 @@ void flip_horizontally(Image &image, string imageName) {
 }
 
 void flip_vertically(Image &image, string imageName) {
-    Image img (imageName), img2 (imageName);
+    Image img(imageName), img2(imageName);
     for (int i = 0; i < img2.width; i++) {
         for (int j = 0, y = img.height - 1; j < img2.height; j++, y--) {
             for (int k = 0; k < 3; k++) {
@@ -224,6 +224,31 @@ void rotate(Image &image, string imageName) {
     }
 }
 
+void lighten_image(Image &image, string imageName) {
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            for (int k = 0; k < image.channels; ++k) {
+                int newValue = 1.5 * image(i, j, k);
+                newValue = min(newValue, 255);
+                image(i, j, k) = newValue;
+            }
+        }
+    }
+    printImage(image, imageName);
+}
+
+void darken_image(Image &image, string imageName) {
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            for (int k = 0; k < image.channels; ++k) {
+                int newValue = 0.5 * image(i, j, k);
+                newValue = max(newValue, 0);
+                image(i, j, k) = newValue;
+            }
+        }
+    }
+    printImage(image, imageName);
+}
 
 int main() {
     while (true) {
@@ -240,6 +265,7 @@ int main() {
         cout << "Enter the image file name you want to upload\n";
         getline(cin, imageName);
         Image image;
+        image.loadNewImage(imageName);
         try {
             image.loadNewImage(imageName);
         }
@@ -252,6 +278,8 @@ int main() {
         cout << "3: Invert Image\n";
         cout << "4: Flip Image\n";
         cout << "5: Rotate Image\n";
+        cout << "6: Lighten Image\n";
+        cout << "7: Darken Image\n";
 
         while (true) {
             string filter;
@@ -266,6 +294,10 @@ int main() {
                 flip(image, imageName);
             else if (filter == "5")
                 rotate(image, imageName);
+            else if (filter == "6")
+                lighten_image(image, imageName);
+            else if (filter == "7")
+                darken_image(image, imageName);
             else {
                 cout << "Enter a valid option\n";
                 continue;
