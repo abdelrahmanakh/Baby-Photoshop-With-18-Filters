@@ -261,6 +261,14 @@ Image edge_detection(Image image) {
                     {0,  0,  0},
                     {-1, -2, -1}};
 
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            for (int k = 0; k < image.channels; ++k) {
+                modified_image(i, j, k) = 255;
+            }
+        }
+    }
+
     int threshold = 110;
     for (int i = 1; i < image.width - 1; ++i) {
         for (int j = 1; j < image.height - 1; ++j) {
@@ -319,9 +327,12 @@ Image blurImage(Image image) {
             int sumR = 0, sumG = 0, sumB = 0;
             int numPixels = (endX - startX + 1) * (endY - startY + 1);
 
-            sumR = pref[endX][endY][0] - pref[startX - 1][endY][0] - pref[endX][startY - 1][0] + pref[startX - 1][startY - 1][0];
-            sumG = pref[endX][endY][1] - pref[startX - 1][endY][1] - pref[endX][startY - 1][1] + pref[startX - 1][startY - 1][1];
-            sumB = pref[endX][endY][2] - pref[startX - 1][endY][2] - pref[endX][startY - 1][2] + pref[startX - 1][startY - 1][2];
+            sumR = pref[endX][endY][0] - pref[startX - 1][endY][0] - pref[endX][startY - 1][0] +
+                   pref[startX - 1][startY - 1][0];
+            sumG = pref[endX][endY][1] - pref[startX - 1][endY][1] - pref[endX][startY - 1][1] +
+                   pref[startX - 1][startY - 1][1];
+            sumB = pref[endX][endY][2] - pref[startX - 1][endY][2] - pref[endX][startY - 1][2] +
+                   pref[startX - 1][startY - 1][2];
 
             int avgR = sumR / numPixels;
             int avgG = sumG / numPixels;
