@@ -7,7 +7,7 @@
  *          Saleem Sami Saleem Aljerjawi, 20230794, Group:A, Sec.no:4
  *          Mazen Mohamed Abdelsalam Ali Elsheikh, 20230587, Group:A, Sec.no:4
  * TA:      Ahmed Foad Lotfy
- * Who did what: Mazen: The Menu of the previous delivery & Print function & Grayscale Filter & Lighten and Darken filter & Edge detection
+ * Who did what: Mazen: The Menu of the previous delivery & Print function & Grayscale Filter & Lighten and Darken filter & Edge detection & Merge filter
  *               Abdelrahman: the menu of this delivery & flip  & black_and_white & Crop & resize Filters
  *               Saleem: Invert & Rotate Filters
  * Emails:
@@ -296,30 +296,37 @@ Image edge_detection(Image image) {
 
 Image blurImage(Image image) {
     Image blurredImage(image.width, image.height);
-    int blurSize = 30;
+    int blurSize = 50;
+
+    vector<vector<vector<int>>> pref(
+            vector<vector<vector<int>>>(image.width + 1, vector<vector<int>>(image.height + 1, vector<int>(3, 0))));
+
+    for (int i = 1; i <= image.width; ++i) {
+        for (int j = 1; j <= image.height; ++j) {
+            for (int k = 0; k < 3; ++k) {
+                pref[i][j][k] = pref[i - 1][j][k] + pref[i][j - 1][k] - pref[i - 1][j - 1][k] + image(i - 1, j - 1, k);
+            }
+        }
+    }
+
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < image.height; ++j) {
-            int startX = max(0, i - blurSize / 2);
-            int startY = max(0, j - blurSize / 2);
-            int endX = min(image.width - 1, i + blurSize / 2);
-            int endY = min(image.height - 1, j + blurSize / 2);
+            int startX = max(0, i - blurSize / 2) + 1;
+            int startY = max(0, j - blurSize / 2) + 1;
+            int endX = min(image.width - 1, i + blurSize / 2) + 1;
+            int endY = min(image.height - 1, j + blurSize / 2) + 1;
 
-            unsigned int sumR = 0, sumG = 0, sumB = 0;
-            int numPixels = 0;
-            for (int x = startX; x <= endX; ++x) {
-                for (int y = startY; y <= endY; ++y) {
-                    sumR += image(x, y, 0);
-                    sumG += image(x, y, 1);
-                    sumB += image(x, y, 2);
-                    numPixels++;
-                }
-            }
+            int sumR = 0, sumG = 0, sumB = 0;
+            int numPixels = (endX - startX + 1) * (endY - startY + 1);
 
-            unsigned int avgR = sumR / numPixels;
-            unsigned int avgG = sumG / numPixels;
-            unsigned int avgB = sumB / numPixels;
+            sumR = pref[endX][endY][0] - pref[startX - 1][endY][0] - pref[endX][startY - 1][0] + pref[startX - 1][startY - 1][0];
+            sumG = pref[endX][endY][1] - pref[startX - 1][endY][1] - pref[endX][startY - 1][1] + pref[startX - 1][startY - 1][1];
+            sumB = pref[endX][endY][2] - pref[startX - 1][endY][2] - pref[endX][startY - 1][2] + pref[startX - 1][startY - 1][2];
 
-            // Assign the average pixel value to the corresponding pixel in the blurred image
+            int avgR = sumR / numPixels;
+            int avgG = sumG / numPixels;
+            int avgB = sumB / numPixels;
+
             blurredImage(i, j, 0) = avgR;
             blurredImage(i, j, 1) = avgG;
             blurredImage(i, j, 2) = avgB;
