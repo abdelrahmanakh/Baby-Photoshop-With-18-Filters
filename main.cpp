@@ -85,7 +85,7 @@ Image black_and_white(Image image) {
 }
 
 Image flip_horizontally(Image image) {
-    Image img=image, img2=image;
+    Image img = image, img2 = image;
     for (int i = 0, x = img2.width - 1; i < img2.width; i++, x--) {
         for (int j = 0; j < img2.height; j++) {
             for (int k = 0; k < 3; k++) {
@@ -98,7 +98,7 @@ Image flip_horizontally(Image image) {
 }
 
 Image flip_vertically(Image image) {
-    Image img=image, img2=image;
+    Image img = image, img2 = image;
     for (int i = 0; i < img2.width; i++) {
         for (int j = 0, y = img.height - 1; j < img2.height; j++, y--) {
             for (int k = 0; k < 3; k++) {
@@ -252,7 +252,7 @@ Image darken_image(Image image) {
 
 Image edge_detection(Image image) {
     image = grayscale_conversion(image);
-    Image modified_image=image;
+    Image modified_image = image;
 
     int dx[3][3] = {{-1, 0, 1},
                     {-2, 0, 2},
@@ -346,6 +346,15 @@ Image crop(Image img) {
     return img2;
 }
 
+Image sunlight_filter(Image image) {
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            image(i, j, 2) = image(i, j, 2) * 0.75;
+        }
+    }
+    return image;
+}
+
 int main() {
     string imageName;
     Image image;
@@ -381,8 +390,9 @@ int main() {
         cout << "8: Detect Image Edges\n";
         cout << "9: Blur Image\n";
         cout << "10: Crop Image\n";
-        cout<< "11: Save Image\n";
-        cout << "12: Exit\n";
+        cout << "11: Sunlight Image\n";
+        cout << "12: Save Image\n";
+        cout << "13: Exit\n";
         while (true) {
             string filter;
             getline(cin, filter);
@@ -414,9 +424,11 @@ int main() {
                 image = blurImage(image);
             else if (filter == "10")
                 image = crop(image);
-            else if(filter=="11")
-                printImage(image,imageName);
+            else if (filter == "11")
+                image = sunlight_filter(image);
             else if (filter == "12")
+                printImage(image, imageName);
+            else if (filter == "13")
                 return 0;
             else {
                 cout << "Enter a valid option\n";
