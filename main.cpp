@@ -296,7 +296,7 @@ Image edge_detection(Image image) {
 
 Image blurImage(Image image) {
     Image blurredImage(image.width, image.height);
-    int blurSize = 50;
+    int blurSize = 100;
 
     vector<vector<vector<int>>> pref(
             vector<vector<vector<int>>>(image.width + 1, vector<vector<int>>(image.height + 1, vector<int>(3, 0))));
@@ -337,10 +337,42 @@ Image blurImage(Image image) {
 
 Image crop(Image img) {
     int x, y, w, h;
-    cout << "Enter the position x,y where you want to start cropping:\n";
-    cin >> x >> y;
-    cout << "Enter the dimensions of the new image:\n";
-    cin >> w >> h;
+    string sx,sy,sw,sh;
+    while(true) {
+        cout << "the image size is " << img.width << " X " << img.height
+             << "\nEnter the position x,y where you want to start cropping:\n";
+        cin >> sx >> sy;
+        try {
+            x = stoi(sx);
+            y = stoi(sy);;
+        }
+        catch (invalid_argument const &e) {
+            cout << "Please enter a number!\n";
+            continue;
+        }
+        if(x>img.width||y>img.height){
+            cout<<"This exceeds image dimensions!!\n";
+            continue;
+        }
+        break;
+    }
+    while (true){
+        cout << "the image size is " << img.width << " X " << img.height<< "\nEnter the dimensions of the new image:\n";
+        cin >> sw >> sh;
+        try{
+            w = stoi(sw);
+            h = stoi(sh);
+        }
+        catch (invalid_argument const &e){
+            cout<<"Please enter a number!\n";
+            continue;
+        }
+        if(w>img.width||h>img.height){
+            cout<<"This exceeds image dimensions!!\n";
+            continue;
+        }
+        break;
+    }
     Image img2(w, h);
     for (int i = 0, a = x; i < w; i++, a++) {
         for (int j = 0, b = y; j < h; j++, b++) {
@@ -350,6 +382,7 @@ Image crop(Image img) {
             }
         }
     }
+    cin.ignore();
     return img2;
 }
 
@@ -361,7 +394,14 @@ Image sunlight_filter(Image image) {
     }
     return image;
 }
-
+Image purple_filter(Image image){
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            image(i,j,1) *=0.65;
+        }
+    }
+    return image;
+}
 int main() {
     string imageName;
     Image image;
@@ -398,18 +438,23 @@ int main() {
         cout << "9: Blur Image\n";
         cout << "10: Crop Image\n";
         cout << "11: Sunlight Image\n";
-        cout << "12: Save Image\n";
-        cout << "13: Exit\n";
+        cout << "12: Purple filter\n";
+        cout << "13: Save Image\n";
+        cout << "14: Exit\n";
         while (true) {
             string filter;
             getline(cin, filter);
             if (filter == "0") {
-                getline(cin, imageName);
-                try {
-                    image.loadNewImage(imageName);
-                }
-                catch (const invalid_argument &e) {
-                    continue;
+                while(true) {
+                    cout << "Enter the image file name you want to upload\n";
+                    getline(cin, imageName);
+                    try {
+                        image.loadNewImage(imageName);
+                    }
+                    catch (const invalid_argument &e) {
+                        continue;
+                    }
+                    break;
                 }
             } else if (filter == "1")
                 image = grayscale_conversion(image);
@@ -434,8 +479,10 @@ int main() {
             else if (filter == "11")
                 image = sunlight_filter(image);
             else if (filter == "12")
-                printImage(image, imageName);
+                image = purple_filter(image);
             else if (filter == "13")
+                printImage(image, imageName);
+            else if (filter == "14")
                 return 0;
             else {
                 cout << "Enter a valid option\n";
