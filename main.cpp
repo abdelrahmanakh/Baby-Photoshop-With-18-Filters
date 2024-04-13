@@ -294,6 +294,40 @@ void edge_detection(Image &image, string imageName) {
     printImage(modified_image, imageName);
 }
 
+void blurImage(Image& image,string imageName) {
+    Image blurredImage(image.width,image.height);
+    int blurSize = 30;
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            int startX = max(0, i - blurSize / 2);
+            int startY = max(0, j - blurSize / 2);
+            int endX = min(image.width - 1, i + blurSize / 2);
+            int endY = min(image.height - 1, j + blurSize / 2);
+
+            unsigned int sumR = 0, sumG = 0, sumB = 0;
+            int numPixels = 0;
+            for (int x = startX; x <= endX; ++x) {
+                for (int y = startY; y <= endY; ++y) {
+                    sumR += image(x, y, 0);
+                    sumG += image(x, y, 1);
+                    sumB += image(x, y, 2);
+                    numPixels++;
+                }
+            }
+
+            unsigned int avgR = sumR / numPixels;
+            unsigned int avgG = sumG / numPixels;
+            unsigned int avgB = sumB / numPixels;
+
+            // Assign the average pixel value to the corresponding pixel in the blurred image
+            blurredImage(i, j, 0) = avgR;
+            blurredImage(i, j, 1) = avgG;
+            blurredImage(i, j, 2) = avgB;
+        }
+    }
+    printImage(blurredImage,imageName);
+}
+
 int main() {
     while (true) {
         cout << "A: Choose an image to edit\nB: Exit\n";
@@ -324,6 +358,7 @@ int main() {
         cout << "6: Lighten Image\n";
         cout << "7: Darken Image\n";
         cout << "8: Detect Image Edges\n";
+        cout << "9: Blur Image\n";
 
         while (true) {
             string filter;
@@ -344,6 +379,8 @@ int main() {
                 darken_image(image, imageName);
             else if (filter == "8")
                 edge_detection(image, imageName);
+            else if (filter == "9")
+                blurImage(image, imageName);
             else {
                 cout << "Enter a valid option\n";
                 continue;
