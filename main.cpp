@@ -328,7 +328,7 @@ void blurImage(Image& image,string imageName) {
     printImage(blurredImage,imageName);
 }
 
-void crop(Image& image,string imageName){
+void crop(string imageName){
     int x,y,w,h;
     cout<<"Enter the position x,y where you want to start cropping:\n";
     cin>>x>>y;
@@ -346,6 +346,79 @@ void crop(Image& image,string imageName){
     printImage(img2,imageName);
 }
 
+void minimize(int scale_width, int scale_height, string imageName){
+    Image img (imageName);
+
+    Image img2(img.width/scale_width,img.height/scale_height);
+    for(int i=0,a=0;a<img2.width;i+=scale_width,a++){
+        for(int j=0,b=0;b<img2.height;j+=scale_height,b++){
+            for(int k=0;k<3;k++){
+                img2(a,b,k)=img(i,j,k);
+            }
+        }
+    }
+    printImage(img2,imageName);
+}
+void maximize(int scale_width, int scale_height, string imageName){
+    Image img (imageName);
+    //int scale_width = 9090/img.width, scale_height = 6060/img.height;
+    Image img2(img.width*scale_width,img.height*scale_height);
+    for(int i=0,a=0;a<img2.width;a+=scale_width,i++){
+        for(int j=0,b=0;b<img2.height;b+=scale_height,j++){
+            for(int k=0;k<3;k++){
+                for(int x=0;x<scale_width;x++){
+                    for(int y=0;y<scale_height;y++){
+                        img2(a+x,b+y,k)=img(i,j,k);
+                    }
+                }
+            }
+        }
+    }
+    printImage(img2,imageName);
+}
+
+void resize(string imageName){
+    Image img (imageName);
+    int choice,w=0,h=0;
+    float scale=0,scale_width,scale_height;
+    while(true) {
+        cout<< "Want to enter\n1)A scale\n2)New Dimensions\n";
+        cin>>choice;
+        if(choice==1){
+            cout<<"Enter the scale:";
+            cin>>scale;
+            if(scale>1)
+                maximize(scale, scale, imageName);
+            else if(scale>0)
+                minimize(1/scale, 1/scale, imageName);
+            else {
+                cout << "Please enter a valid scale!!";
+                continue;
+            }
+        }
+        else if(choice==2){
+            cout<<"Enter the new dimensions:";
+            cin>>w>>h;
+            if(w>img.width && h>img.height){
+                scale_width = w/img.width, scale_height = h/img.height;
+                maximize(scale_width,scale_height, imageName);
+            }
+            else if(w<=img.width && h<=img.height){
+                scale_width = img.width/w, scale_height = img.height/h;
+                minimize(scale_width,scale_height, imageName);
+            }
+            else{
+                cout<<"Sorry but you have to make both dimensions either smaller or greater!!"<<endl;
+                continue;
+            }
+
+        }
+        else{
+            continue;
+        }
+        break;
+    }
+}
 
 
 int main() {
@@ -380,6 +453,7 @@ int main() {
         cout << "8: Detect Image Edges\n";
         cout << "9: Blur Image\n";
         cout<< "10: Crop Image\n";
+        cout<< "11: Resize Image\n";
 
         while (true) {
             string filter;
@@ -403,7 +477,9 @@ int main() {
             else if (filter == "9")
                 blurImage(image, imageName);
             else if (filter == "10")
-                crop(image,imageName);
+                crop(imageName);
+            else if (filter == "11")
+                resize(imageName);
             else {
                 cout << "Enter a valid option\n";
                 continue;
