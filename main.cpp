@@ -8,7 +8,7 @@
  *          Mazen Mohamed Abdelsalam Ali Elsheikh, 20230587, Group:A, Sec.no:4
  * TA:      Ahmed Foad Lotfy
  * Who did what: Mazen: The Menu of the previous delivery & Print function & Grayscale Filter & Lighten and Darken filter & Edge detection
- *               Abdelrahman: flip  & black_and_white Filters
+ *               Abdelrahman: the menu of this delivery & flip  & black_and_white & Crop & resize Filters
  *               Saleem: Invert & Rotate Filters
  * Emails:
  *        Mazen: 11410120230587@stud.cu.edu.eg
@@ -22,7 +22,7 @@
 
 using namespace std;
 
-void printImage(Image &image, string imageName) {
+void printImage(Image image, string imageName) {
     string option;
     cout << "A: Modify on the current image\n";
     cout << "B: Modify in a new image\n";
@@ -53,7 +53,7 @@ void printImage(Image &image, string imageName) {
     }
 }
 
-void grayscale_conversion(Image &image, string imageName, bool print) {
+Image grayscale_conversion(Image image) {
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < image.height; ++j) {
             int value = 0.299 * image(i, j, 0) + 0.587 * image(i, j, 1) + 0.114 * image(i, j, 2);
@@ -61,11 +61,10 @@ void grayscale_conversion(Image &image, string imageName, bool print) {
                 image(i, j, k) = value;
         }
     }
-    if (print)
-        printImage(image, imageName);
+    return image;
 }
 
-void black_and_white(Image &image, string imageName) {
+Image black_and_white(Image image) {
     for (int i = 0; i < image.width; i++) {
         for (int j = 0; j < image.height; j++) {
             unsigned int avg = 0;
@@ -82,11 +81,11 @@ void black_and_white(Image &image, string imageName) {
             }
         }
     }
-    printImage(image, imageName);
+    return image;
 }
 
-void flip_horizontally(Image &image, string imageName) {
-    Image img(imageName), img2(imageName);
+Image flip_horizontally(Image image) {
+    Image img=image, img2=image;
     for (int i = 0, x = img2.width - 1; i < img2.width; i++, x--) {
         for (int j = 0; j < img2.height; j++) {
             for (int k = 0; k < 3; k++) {
@@ -95,11 +94,11 @@ void flip_horizontally(Image &image, string imageName) {
             }
         }
     }
-    printImage(img, imageName);
+    return img;
 }
 
-void flip_vertically(Image &image, string imageName) {
-    Image img(imageName), img2(imageName);
+Image flip_vertically(Image image) {
+    Image img=image, img2=image;
     for (int i = 0; i < img2.width; i++) {
         for (int j = 0, y = img.height - 1; j < img2.height; j++, y--) {
             for (int k = 0; k < 3; k++) {
@@ -108,10 +107,10 @@ void flip_vertically(Image &image, string imageName) {
             }
         }
     }
-    printImage(img, imageName);
+    return img;
 }
 
-void flip(Image &image, string imageName) {
+Image flip(Image image) {
     cout << "Enter the type of flipping you want\n";
     cout << "A: Horizontal\n";
     cout << "B: Verticel\n";
@@ -120,10 +119,10 @@ void flip(Image &image, string imageName) {
         getline(cin, option
         );
         if (option == "A" || option == "a")
-            flip_horizontally(image, imageName
+            image = flip_horizontally(image
             );
         else if (option == "B" || option == "b")
-            flip_vertically(image, imageName
+            image = flip_vertically(image
             );
         else {
             cout << "Enter a valid option\n";
@@ -131,9 +130,10 @@ void flip(Image &image, string imageName) {
         }
         break;
     }
+    return image;
 }
 
-void invert_image(Image &image, string imageName) {
+Image invert_image(Image image) {
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < image.height; ++j) {
             unsigned int inv_r = 255 - image(i, j, 0);
@@ -146,10 +146,10 @@ void invert_image(Image &image, string imageName) {
         }
     }
 
-    printImage(image, imageName);
+    return image;
 }
 
-void rotateImage90(Image &image, string imageName) {
+Image rotateImage90(Image image) {
     Image adjusted_img(image.height, image.width);
 
     for (int i = 0; i < image.width; ++i) {
@@ -164,10 +164,10 @@ void rotateImage90(Image &image, string imageName) {
             }
         }
     }
-    printImage(adjusted_img, imageName);
+    return adjusted_img;
 }
 
-void rotateImage180(Image &image, string imageName) {
+Image rotateImage180(Image image) {
     Image adjusted_img(image.width, image.height);
 
     for (int i = 0; i < image.width; ++i) {
@@ -181,10 +181,10 @@ void rotateImage180(Image &image, string imageName) {
             }
         }
     }
-    printImage(adjusted_img, imageName);
+    return adjusted_img;
 }
 
-void rotateImage270(Image &image, string imageName) {
+Image rotateImage270(Image image) {
     Image adjusted_img(image.height, image.width);
 
     for (int i = 0; i < image.width; ++i) {
@@ -198,10 +198,10 @@ void rotateImage270(Image &image, string imageName) {
             }
         }
     }
-    printImage(adjusted_img, imageName);
+    return adjusted_img;
 }
 
-void rotate(Image &image, string imageName) {
+Image rotate(Image image) {
     cout << "Enter the degree of rotation you want\n";
     cout << "A: 90\n";
     cout << "B: 180\n";
@@ -210,20 +210,21 @@ void rotate(Image &image, string imageName) {
         string degree;
         getline(cin, degree);
         if (degree == "A" || degree == "a")
-            rotateImage90(image, imageName);
+            image = rotateImage90(image);
         else if (degree == "B" || degree == "b")
-            rotateImage180(image, imageName);
+            image = rotateImage180(image);
         else if (degree == "C" || degree == "c")
-            rotateImage270(image, imageName);
+            image = rotateImage270(image);
         else {
             cout << "Enter a valid option\n";
             continue;
         }
         break;
     }
+    return image;
 }
 
-void lighten_image(Image &image, string imageName) {
+Image lighten_image(Image image) {
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
@@ -233,10 +234,10 @@ void lighten_image(Image &image, string imageName) {
             }
         }
     }
-    printImage(image, imageName);
+    return image;
 }
 
-void darken_image(Image &image, string imageName) {
+Image darken_image(Image image) {
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
@@ -246,12 +247,12 @@ void darken_image(Image &image, string imageName) {
             }
         }
     }
-    printImage(image, imageName);
+    return image;
 }
 
-void edge_detection(Image &image, string imageName) {
-    grayscale_conversion(image, imageName, false);
-    Image modified_image(imageName);
+Image edge_detection(Image image) {
+    image = grayscale_conversion(image);
+    Image modified_image=image;
 
     int dx[3][3] = {{-1, 0, 1},
                     {-2, 0, 2},
@@ -282,8 +283,7 @@ void edge_detection(Image &image, string imageName) {
             if (r_value > threshold) {
                 for (int k = 0; k < 3; ++k)
                     modified_image(i, j, k) = 0;
-            }
-            else {
+            } else {
                 for (int k = 0; k < 3; ++k)
                     modified_image(i, j, k) = 255;
             }
@@ -291,11 +291,11 @@ void edge_detection(Image &image, string imageName) {
         }
     }
 
-    printImage(modified_image, imageName);
+    return modified_image;
 }
 
-void blurImage(Image& image,string imageName) {
-    Image blurredImage(image.width,image.height);
+Image blurImage(Image image) {
+    Image blurredImage(image.width, image.height);
     int blurSize = 30;
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < image.height; ++j) {
@@ -325,28 +325,30 @@ void blurImage(Image& image,string imageName) {
             blurredImage(i, j, 2) = avgB;
         }
     }
-    printImage(blurredImage,imageName);
+    return blurredImage;
 }
 
-void crop(string imageName){
-    int x,y,w,h;
-    cout<<"Enter the position x,y where you want to start cropping:\n";
-    cin>>x>>y;
-    cout<<"Enter the dimensions of the new image:\n";
-    cin>>w>>h;
-    Image img (imageName), img2(w,h);
-    for (int i = 0, a = x; i < w ; i++, a++) {
-        for (int j = 0, b = y; j < h ; j++, b++) {
+Image crop(Image img) {
+    int x, y, w, h;
+    cout << "Enter the position x,y where you want to start cropping:\n";
+    cin >> x >> y;
+    cout << "Enter the dimensions of the new image:\n";
+    cin >> w >> h;
+    Image img2(w, h);
+    for (int i = 0, a = x; i < w; i++, a++) {
+        for (int j = 0, b = y; j < h; j++, b++) {
             for (int k = 0; k < 3; k++) {
                 int v = img(a, b, k);
                 img2(i, j, k) = v;
             }
         }
     }
-    printImage(img2,imageName);
+    return img2;
 }
 
 int main() {
+    string imageName;
+    Image image;
     while (true) {
         cout << "A: Choose an image to edit\nB: Exit\n";
         string option;
@@ -357,17 +359,18 @@ int main() {
             cout << "Enter a valid option\n";
             continue;
         }
-        string imageName;
         cout << "Enter the image file name you want to upload\n";
         getline(cin, imageName);
-        Image image;
         try {
             image.loadNewImage(imageName);
         }
         catch (const invalid_argument &e) {
             continue;
         }
-        cout << "Choose the filter you want to apply\n";
+        break;
+    }
+    while (true) {
+        cout << "0: Load A new Image\n";
         cout << "1: Grayscale Conversion\n";
         cout << "2: Black and White\n";
         cout << "3: Invert Image\n";
@@ -377,34 +380,44 @@ int main() {
         cout << "7: Darken Image\n";
         cout << "8: Detect Image Edges\n";
         cout << "9: Blur Image\n";
-        cout<< "10: Crop Image\n";
-//        cout<< "11: Resize Image\n";
-
+        cout << "10: Crop Image\n";
+        cout<< "11: Save Image\n";
+        cout << "12: Exit\n";
         while (true) {
             string filter;
             getline(cin, filter);
-            if (filter == "1")
-                grayscale_conversion(image, imageName, true);
+            if (filter == "0") {
+                getline(cin, imageName);
+                try {
+                    image.loadNewImage(imageName);
+                }
+                catch (const invalid_argument &e) {
+                    continue;
+                }
+            } else if (filter == "1")
+                image = grayscale_conversion(image);
             else if (filter == "2")
-                black_and_white(image, imageName);
+                image = black_and_white(image);
             else if (filter == "3")
-                invert_image(image, imageName);
+                image = invert_image(image);
             else if (filter == "4")
-                flip(image, imageName);
+                image = flip(image);
             else if (filter == "5")
-                rotate(image, imageName);
+                image = rotate(image);
             else if (filter == "6")
-                lighten_image(image, imageName);
+                image = lighten_image(image);
             else if (filter == "7")
-                darken_image(image, imageName);
+                image = darken_image(image);
             else if (filter == "8")
-                edge_detection(image, imageName);
+                image = edge_detection(image);
             else if (filter == "9")
-                blurImage(image, imageName);
+                image = blurImage(image);
             else if (filter == "10")
-                crop(imageName);
-//            else if (filter == "11")
-//                resize(imageName);
+                image = crop(image);
+            else if(filter=="11")
+                printImage(image,imageName);
+            else if (filter == "12")
+                return 0;
             else {
                 cout << "Enter a valid option\n";
                 continue;
