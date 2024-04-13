@@ -328,6 +328,26 @@ void blurImage(Image& image,string imageName) {
     printImage(blurredImage,imageName);
 }
 
+void crop(Image& image,string imageName){
+    int x,y,w,h;
+    cout<<"Enter the position x,y where you want to start cropping:\n";
+    cin>>x>>y;
+    cout<<"Enter the dimensions of the new image:\n";
+    cin>>w>>h;
+    Image img (imageName), img2(w,h);
+    for (int i = 0, a = x; i < w ; i++, a++) {
+        for (int j = 0, b = y; j < h ; j++, b++) {
+            for (int k = 0; k < 3; k++) {
+                int v = img(a, b, k);
+                img2(i, j, k) = v;
+            }
+        }
+    }
+    printImage(img2,imageName);
+}
+
+
+
 int main() {
     while (true) {
         cout << "A: Choose an image to edit\nB: Exit\n";
@@ -359,6 +379,7 @@ int main() {
         cout << "7: Darken Image\n";
         cout << "8: Detect Image Edges\n";
         cout << "9: Blur Image\n";
+        cout<< "10: Crop Image\n";
 
         while (true) {
             string filter;
@@ -381,6 +402,8 @@ int main() {
                 edge_detection(image, imageName);
             else if (filter == "9")
                 blurImage(image, imageName);
+            else if (filter == "10")
+                crop(image,imageName);
             else {
                 cout << "Enter a valid option\n";
                 continue;
