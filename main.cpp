@@ -7,7 +7,7 @@
  *          Saleem Sami Saleem Aljerjawi, 20230794, Group:A, Sec.no:4
  *          Mazen Mohamed Abdelsalam Ali Elsheikh, 20230587, Group:A, Sec.no:4
  * TA:      Ahmed Foad Lotfy
- * Who did what: Mazen: The Menu of the previous delivery & Print function & Grayscale Filter & Lighten and Darken filter
+ * Who did what: Mazen: The Menu of the previous delivery & Print function & Grayscale Filter & Lighten and Darken filter & Edge detection
  *               Abdelrahman: flip  & black_and_white Filters
  *               Saleem: Invert & Rotate Filters
  * Emails:
@@ -18,6 +18,7 @@
 #include <iostream>
 #include <cstdlib>
 #include "Image_Class.h"
+#include "vector"
 
 using namespace std;
 
@@ -52,18 +53,16 @@ void printImage(Image &image, string imageName) {
     }
 }
 
-void grayscale_conversion(Image &image, string imageName) {
+void grayscale_conversion(Image &image, string imageName, bool print) {
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < image.height; ++j) {
-            int average = 0;
+            int value = 0.299 * image(i, j, 0) + 0.587 * image(i, j, 1) + 0.114 * image(i, j, 2);
             for (int k = 0; k < image.channels; ++k)
-                average += image(i, j, k);
-            average /= 3;
-            for (int k = 0; k < image.channels; ++k)
-                image(i, j, k) = average;
+                image(i, j, k) = value;
         }
     }
-    printImage(image, imageName);
+    if (print)
+        printImage(image, imageName);
 }
 
 void black_and_white(Image &image, string imageName) {
@@ -250,6 +249,51 @@ void darken_image(Image &image, string imageName) {
     printImage(image, imageName);
 }
 
+void edge_detection(Image &image, string imageName) {
+    grayscale_conversion(image, imageName, false);
+    Image modified_image(imageName);
+
+    int dx[3][3] = {{-1, 0, 1},
+                    {-2, 0, 2},
+                    {-1, 0, 1}};
+    int dy[3][3] = {{1,  2,  1},
+                    {0,  0,  0},
+                    {-1, -2, -1}};
+
+    int threshold = 110;
+    for (int i = 1; i < image.width - 1; ++i) {
+        for (int j = 1; j < image.height - 1; ++j) {
+
+            int x_value = 0;
+            for (int l = 0; l < 3; ++l) {
+                for (int r = 0; r < 3; ++r) {
+                    x_value += dx[l][r] * image(i + r - 1, j + l - 1, 0);
+                }
+            }
+
+            int y_value = 0;
+            for (int l = 0; l < 3; ++l) {
+                for (int r = 0; r < 3; ++r) {
+                    y_value += dy[l][r] * image(i + r - 1, j + l - 1, 0);
+                }
+            }
+
+            int r_value = sqrt(x_value * x_value + y_value * y_value);
+            if (r_value > threshold) {
+                for (int k = 0; k < 3; ++k)
+                    modified_image(i, j, k) = 0;
+            }
+            else {
+                for (int k = 0; k < 3; ++k)
+                    modified_image(i, j, k) = 255;
+            }
+
+        }
+    }
+
+    printImage(modified_image, imageName);
+}
+
 int main() {
     while (true) {
         cout << "A: Choose an image to edit\nB: Exit\n";
@@ -265,7 +309,6 @@ int main() {
         cout << "Enter the image file name you want to upload\n";
         getline(cin, imageName);
         Image image;
-        image.loadNewImage(imageName);
         try {
             image.loadNewImage(imageName);
         }
@@ -280,12 +323,13 @@ int main() {
         cout << "5: Rotate Image\n";
         cout << "6: Lighten Image\n";
         cout << "7: Darken Image\n";
+        cout << "8: Detect Image Edges\n";
 
         while (true) {
             string filter;
             getline(cin, filter);
             if (filter == "1")
-                grayscale_conversion(image, imageName);
+                grayscale_conversion(image, imageName, true);
             else if (filter == "2")
                 black_and_white(image, imageName);
             else if (filter == "3")
@@ -298,6 +342,8 @@ int main() {
                 lighten_image(image, imageName);
             else if (filter == "7")
                 darken_image(image, imageName);
+            else if (filter == "8")
+                edge_detection(image, imageName);
             else {
                 cout << "Enter a valid option\n";
                 continue;
