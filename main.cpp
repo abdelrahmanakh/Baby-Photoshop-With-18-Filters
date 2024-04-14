@@ -346,44 +346,51 @@ Image blurImage(Image image) {
     return blurredImage;
 }
 
-Image crop(Image img) {
+Image crop(Image img, bool print = true, int w0 = 0, int h0 = 0) {
     int x, y, w, h;
-    string sx,sy,sw,sh;
-    while(true) {
-        cout << "the image size is " << img.width << " X " << img.height
-             << "\nEnter the position x,y where you want to start cropping:\n";
-        cin >> sx >> sy;
-        try {
-            x = stoi(sx);
-            y = stoi(sy);;
+    if(print) {
+        string sx, sy, sw, sh;
+        while (true) {
+            cout << "the image size is " << img.width << " X " << img.height
+                 << "\nEnter the position x,y where you want to start cropping:\n";
+            cin >> sx >> sy;
+            try {
+                x = stoi(sx);
+                y = stoi(sy);
+            }
+            catch (invalid_argument const &e) {
+                cout << "Please enter a number!\n";
+                continue;
+            }
+            if (x > img.width || y > img.height) {
+                cout << "This exceeds image dimensions!!\n";
+                continue;
+            }
+            break;
         }
-        catch (invalid_argument const &e) {
-            cout << "Please enter a number!\n";
-            continue;
+        while (true) {
+            cout << "the image size is " << img.width << " X " << img.height
+                 << "\nEnter the dimensions of the new image:\n";
+            cin >> sw >> sh;
+            try {
+                w = stoi(sw);
+                h = stoi(sh);
+            }
+            catch (invalid_argument const &e) {
+                cout << "Please enter a number!\n";
+                continue;
+            }
+            if (w > img.width || h > img.height) {
+                cout << "This exceeds image dimensions!!\n";
+                continue;
+            }
+            break;
         }
-        if(x>img.width||y>img.height){
-            cout<<"This exceeds image dimensions!!\n";
-            continue;
-        }
-        break;
+        cin.ignore();
     }
-    while (true){
-        cout << "the image size is " << img.width << " X " << img.height<< "\nEnter the dimensions of the new image:\n";
-        cin >> sw >> sh;
-        try{
-            w = stoi(sw);
-            h = stoi(sh);
-        }
-        catch (invalid_argument const &e){
-            cout<<"Please enter a number!\n";
-            continue;
-        }
-        if(w>img.width||h>img.height){
-            cout<<"This exceeds image dimensions!!\n";
-            continue;
-        }
-        break;
-    }
+    else
+        x = 0, y = 0, w = w0, h = h0;
+
     Image img2(w, h);
     for (int i = 0, a = x; i < w; i++, a++) {
         for (int j = 0, b = y; j < h; j++, b++) {
@@ -393,69 +400,145 @@ Image crop(Image img) {
             }
         }
     }
-    cin.ignore();
+
     return img2;
 }
 
-Image resize(Image image){
+Image resize(Image image, bool print = true, int mx_width = 0, int mx_height = 0) {
     string choice;
     float w, h;
-    string sw,sh;
+    string sw, sh;
+    if (print) {
+        while (true) {
+            cout << "Do you want to enter\n1) A scale\n2) New dimensions\n";
+            cin >> choice;
+            if (choice == "1") {
+                while (true) {
+                    float scale;
+                    string sscale;
+                    cout << "the image size is " << image.width << " X " << image.height
+                         << "\nEnter the scale of the new image:\n";
+                    cin >> sscale;
+                    try {
+                        scale = stof(sscale);
+                    }
+                    catch (invalid_argument const &e) {
+                        cout << "Please enter a number!\n";
+                        continue;
+                    }
+                    w = scale * image.width;
+                    h = scale * image.height;
+                    break;
+                }
+            } else if (choice == "2") {
+                while (true) {
+                    cout << "the image size is " << image.width << " X " << image.height
+                         << "\nEnter the dimensions of the new image:\n";
+                    cin >> sw >> sh;
+                    try {
+                        w = stoi(sw);
+                        h = stoi(sh);
+                    }
+                    catch (invalid_argument const &e) {
+                        cout << "Please enter a number!\n";
+                        continue;
+                    }
+                    break;
+                }
+            } else {
+                cout << "Enter a valid option!\n";
+                continue;
+            }
+            break;
+        }
+        cin.ignore();
+    } else
+        w = mx_width, h = mx_height;
+
+    Image img2(w, h);
+    float scale_width = w / image.width, scale_height = h / image.height;
+    for (int i = 0; i < img2.width; i++) {
+        for (int j = 0; j < img2.height; j++) {
+            for (int k = 0; k < 3; k++) {
+                int x = i / scale_width, y = j / scale_height;
+                img2(i, j, k) = image(x, y, k);
+            }
+        }
+    }
+    return img2;
+}
+
+Image type_1_merge_resize(Image img1, Image img2) {
+    int mx_width = max(img1.width, img2.width);
+    int mx_height = max(img1.height, img2.height);
+    img1 = resize(img1, false, mx_width, mx_height);
+    img2 = resize(img2, false, mx_width, mx_height);
+
+    Image merged_image(mx_width, mx_height);
+    for (int i = 0; i < mx_width; ++i) {
+        for (int j = 0; j < mx_height; ++j) {
+            for (int k = 0; k < 3; ++k) {
+                merged_image(i, j, k) = 0.5 * img1(i, j, k) + 0.5 * img2(i, j, k);
+            }
+        }
+    }
+
+    return merged_image;
+}
+
+Image type_2_merge_crop(Image img1, Image img2) {
+    int mn_width = min(img1.width, img2.width);
+    int mn_height = min(img1.height, img2.height);
+    img1 = crop(img1, false, mn_width, mn_height);
+    img2 = crop(img2, false, mn_width, mn_height);
+
+    Image merged_image(mn_width, mn_height);
+    for (int i = 0; i < mn_width; ++i) {
+        for (int j = 0; j < mn_height; ++j) {
+            for (int k = 0; k < 3; ++k) {
+                merged_image(i, j, k) = 0.5 * img1(i, j, k) + 0.5 * img2(i, j, k);
+            }
+        }
+    }
+
+    return merged_image;
+}
+
+Image merge(Image img1) {
+    Image img2;
     while (true) {
-        cout << "Do you want to enter\n1)A scale\n2)New dimensions\n";
-        cin>>choice;
-        if(choice=="1"){
-            while (true) {
-                float scale;
-                string sscale;
-                cout << "the image size is " << image.width << " X " << image.height<< "\nEnter the scale of the new image:\n";
-                cin>>sscale;
-                try{
-                    scale = stof(sscale);
-                }
-                catch (invalid_argument const &e){
-                    cout<<"Please enter a number!\n";
-                    continue;
-                }
-                w = scale * image.width;
-                h = scale * image.height;
-                break;
-            }
+        string imageName;
+        cout << "Enter the image file name of the other image\n";
+        cout << "Or type \'E\' to exit\n";
+        getline(cin, imageName);
+        if (imageName == "E")
+            return img1;
+        try {
+            img2.loadNewImage(imageName);
         }
-        else if(choice=="2"){
-            while (true){
-                cout << "the image size is " << image.width << " X " << image.height<< "\nEnter the dimensions of the new image:\n";
-                cin >> sw >> sh;
-                try{
-                    w = stoi(sw);
-                    h = stoi(sh);
-                }
-                catch (invalid_argument const &e){
-                    cout<<"Please enter a number!\n";
-                    continue;
-                }
-                break;
-            }
-        }
-        else{
-            cout<<"Enter a valid option!\n";
+        catch (const invalid_argument &e) {
             continue;
         }
         break;
     }
-
-    Image img2(w,h);
-    float scale_width=w/image.width, scale_height=h/image.height;
-    for(int i=0;i<img2.width;i++){
-        for(int j=0;j<img2.height;j++){
-            for(int k=0;k<3;k++){
-                int x = i/scale_width, y = j/scale_height;
-                img2(i,j,k)=image(x,y,k);
-            }
+    Image result;
+    while (true) {
+        string option;
+        cout << "Enter the merge type you want:\n";
+        cout << "A: Resize the smallest dimensions of them to the largest dimensions of them\n";
+        cout << "B: Merge the common area of the smallest width and smallest height among them\n";
+        getline(cin, option);
+        if (option == "A" || option == "a")
+            result = type_1_merge_resize(img1, img2);
+        else if (option == "B" || option == "b")
+            result = type_2_merge_crop(img1, img2);
+        else {
+            cout << "Enter a valid option\n";
+            continue;
         }
+        break;
     }
-    cin.ignore();
-    return img2;
+    return result;
 }
 
 Image simple_frame(Image image) {
@@ -485,7 +568,7 @@ Image simple_frame(Image image) {
     return framedImage;
 }
 
-Image fancy_frame(const Image& image) {
+Image fancy_frame(const Image &image) {
     int modified_width = image.width + 30;
     int modified_height = image.height + 30;
 
@@ -561,16 +644,16 @@ Image sunlight_filter(Image image) {
     return image;
 }
 
-Image purple_filter(Image image){
+Image purple_filter(Image image) {
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < image.height; ++j) {
-            image(i,j,1) *=0.65;
+            image(i, j, 1) *= 0.65;
         }
     }
     return image;
 }
 
-Image infrared_filter(Image image){
+Image infrared_filter(Image image) {
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < image.height; ++j) {
 
@@ -626,13 +709,14 @@ int main() {
         cout << "13: Purple filter\n";
         cout << "14: Infrared filter\n";
         cout << "15: Frame filter\n";
-        cout << "16: Save Image\n";
-        cout << "17: Exit\n";
+        cout << "16: Merge filter\n";
+        cout << "17: Save Image\n";
+        cout << "18: Exit\n";
         while (true) {
             string filter;
             getline(cin, filter);
             if (filter == "0") {
-                while(true) {
+                while (true) {
                     cout << "Enter the image file name you want to upload\n";
                     getline(cin, imageName);
                     try {
@@ -674,8 +758,10 @@ int main() {
             else if (filter == "15")
                 image = frame_filter(image);
             else if (filter == "16")
-                printImage(image, imageName);
+                image = merge(image);
             else if (filter == "17")
+                printImage(image, imageName);
+            else if (filter == "18")
                 return 0;
             else {
                 cout << "Enter a valid option\n";
