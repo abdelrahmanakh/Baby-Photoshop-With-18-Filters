@@ -14,6 +14,8 @@
  *        Mazen: 11410120230587@stud.cu.edu.eg
  *        Abdelrahman: 20230593@stud.fci-cu.edu.eg
  *        Saleem: 20230794@stud.fci-cu.edu.eg
+ *
+ *  Diagram scheme: https://drive.google.com/file/d/1L_iB-lvYQEwGHlE6Cb8cBRx88ubM7oru/view?usp=drive_link
 */
 #include <iostream>
 #include <cstdlib>
