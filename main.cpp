@@ -9,7 +9,7 @@
  * TA:      Ahmed Foad Lotfy
  * Who did what: Mazen: The Menu of the previous delivery & Print function & Grayscale Filter & Lighten and Darken filter & Edge detection & Merge filter
  *               Abdelrahman: the menu of this delivery & flip  & black_and_white & Crop & Resize & Purple Filters
- *               Saleem: Invert & Rotate Filters
+ *               Saleem: Invert & Rotate & Frame & Blur & Infrared Filters
  * Emails:
  *        Mazen: 11410120230587@stud.cu.edu.eg
  *        Abdelrahman: 20230593@stud.fci-cu.edu.eg
