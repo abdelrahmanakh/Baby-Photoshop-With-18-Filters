@@ -8,7 +8,7 @@
  *          Mazen Mohamed Abdelsalam Ali Elsheikh, 20230587, Group:A, Sec.no:4
  * TA:      Ahmed Foad Lotfy
  * Who did what: Mazen: The Menu of the previous delivery & Print function & Grayscale Filter & Lighten and Darken filter & Edge detection & Merge filter
- *               Abdelrahman: the menu of this delivery & flip  & black_and_white & Crop & resize Filters
+ *               Abdelrahman: the menu of this delivery & flip  & black_and_white & Crop & Resize & Purple Filters
  *               Saleem: Invert & Rotate Filters
  * Emails:
  *        Mazen: 11410120230587@stud.cu.edu.eg
@@ -397,6 +397,67 @@ Image crop(Image img) {
     return img2;
 }
 
+Image resize(Image image){
+    string choice;
+    float w, h;
+    string sw,sh;
+    while (true) {
+        cout << "Do you want to enter\n1)A scale\n2)New dimensions\n";
+        cin>>choice;
+        if(choice=="1"){
+            while (true) {
+                float scale;
+                string sscale;
+                cout << "the image size is " << image.width << " X " << image.height<< "\nEnter the scale of the new image:\n";
+                cin>>sscale;
+                try{
+                    scale = stof(sscale);
+                }
+                catch (invalid_argument const &e){
+                    cout<<"Please enter a number!\n";
+                    continue;
+                }
+                w = scale * image.width;
+                h = scale * image.height;
+                break;
+            }
+        }
+        else if(choice=="2"){
+            while (true){
+                cout << "the image size is " << image.width << " X " << image.height<< "\nEnter the dimensions of the new image:\n";
+                cin >> sw >> sh;
+                try{
+                    w = stoi(sw);
+                    h = stoi(sh);
+                }
+                catch (invalid_argument const &e){
+                    cout<<"Please enter a number!\n";
+                    continue;
+                }
+                break;
+            }
+        }
+        else{
+            cout<<"Enter a valid option!\n";
+            continue;
+        }
+        break;
+    }
+
+    Image img2(w,h);
+    float scale_width=w/image.width, scale_height=h/image.height;
+    for(int i=0;i<img2.width;i++){
+        for(int j=0;j<img2.height;j++){
+            for(int k=0;k<3;k++){
+                int x = i/scale_width, y = j/scale_height;
+                img2(i,j,k)=image(x,y,k);
+            }
+        }
+    }
+    cin.ignore();
+    return img2;
+}
+
 Image sunlight_filter(Image image) {
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < image.height; ++j) {
@@ -448,10 +509,11 @@ int main() {
         cout << "8: Detect Image Edges\n";
         cout << "9: Blur Image\n";
         cout << "10: Crop Image\n";
-        cout << "11: Sunlight Image\n";
-        cout << "12: Purple filter\n";
-        cout << "13: Save Image\n";
-        cout << "14: Exit\n";
+        cout << "11: Resize Image\n";
+        cout << "12: Sunlight Image\n";
+        cout << "13: Purple filter\n";
+        cout << "14: Save Image\n";
+        cout << "15: Exit\n";
         while (true) {
             string filter;
             getline(cin, filter);
@@ -488,12 +550,14 @@ int main() {
             else if (filter == "10")
                 image = crop(image);
             else if (filter == "11")
-                image = sunlight_filter(image);
+                image = resize(image);
             else if (filter == "12")
-                image = purple_filter(image);
+                image = sunlight_filter(image);
             else if (filter == "13")
-                printImage(image, imageName);
+                image = purple_filter(image);
             else if (filter == "14")
+                printImage(image, imageName);
+            else if (filter == "15")
                 return 0;
             else {
                 cout << "Enter a valid option\n";
