@@ -458,6 +458,100 @@ Image resize(Image image){
     return img2;
 }
 
+Image simple_frame(Image image) {
+    int modified_width = image.width + 30; // The frame size is 15 So Adding 15 on both sides
+    int modified_height = image.height + 30;
+
+    Image framedImage(modified_width, modified_height);
+
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            for (int k = 0; k < image.channels; ++k) {
+                framedImage(i + 15, j + 15, k) = image(i, j, k);
+            }
+        }
+    }
+
+    for (int i = 0; i < framedImage.width; ++i) {
+        for (int j = 0; j < framedImage.height; ++j) {
+            if ((i < 15 || i >= image.width + 15) || (j < 15 || j >= image.height + 15)) {
+                framedImage(i, j, 0) = 0;
+                framedImage(i, j, 1) = 0;
+                framedImage(i, j, 2) = 255;
+            }
+        }
+    }
+
+    return framedImage;
+}
+
+Image fancy_frame(const Image& image) {
+    int modified_width = image.width + 30;
+    int modified_height = image.height + 30;
+
+    Image framedImage(modified_width, modified_height);
+
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            for (int k = 0; k < image.channels; ++k) {
+                framedImage(i + 15, j + 15, k) = image(i, j, k);
+            }
+        }
+    }
+
+    for (int i = 0; i < framedImage.width; ++i) {
+        for (int j = 0; j < framedImage.height; ++j) {
+            if ((i < 15 || i >= image.width + 15) || (j < 15 || j >= image.height + 15)) {
+                framedImage(i, j, 0) = 0;
+                framedImage(i, j, 1) = 0;
+                framedImage(i, j, 2) = 0;
+            }
+        }
+    }
+
+    for (int i = 0; i < framedImage.width / 2; ++i) {
+        for (int j = 0; j < framedImage.height / 2; ++j) {
+            if ((i < 15 || i >= image.width + 15) || (j < 15 || j >= image.height + 15)) {
+                framedImage(i, j, 0) = 255;
+                framedImage(i, j, 1) = 0;
+                framedImage(i, j, 2) = 0;
+            }
+        }
+    }
+
+    for (int i = framedImage.width / 2; i < framedImage.width; ++i) {
+        for (int j = framedImage.height / 2; j < framedImage.height; ++j) {
+            if ((i < 15 || i >= image.width + 15) || (j < 15 || j >= image.height + 15)) {
+                framedImage(i, j, 0) = 255;
+                framedImage(i, j, 1) = 0;
+                framedImage(i, j, 2) = 0;
+            }
+        }
+    }
+
+    return framedImage;
+}
+
+Image frame_filter(Image image) {
+    cout << "Enter the frame type you want\n";
+    cout << "A: Simple Frame\n";
+    cout << "B: Fancy Frame\n";
+    while (true) {
+        string ans;
+        getline(cin, ans);
+        if (ans == "A" || ans == "a")
+            image = simple_frame(image);
+        else if (ans == "B" || ans == "b")
+            image = fancy_frame(image);
+        else {
+            cout << "Enter a valid option\n";
+            continue;
+        }
+        break;
+    }
+    return image;
+}
+
 Image sunlight_filter(Image image) {
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < image.height; ++j) {
@@ -466,6 +560,7 @@ Image sunlight_filter(Image image) {
     }
     return image;
 }
+
 Image purple_filter(Image image){
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < image.height; ++j) {
@@ -474,6 +569,23 @@ Image purple_filter(Image image){
     }
     return image;
 }
+
+Image infrared_filter(Image image){
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+
+            unsigned int r = image(i, j, 0) = 200;
+            unsigned int inv_g = 255 - image(i, j, 1);
+            unsigned int inv_b = 255 - image(i, j, 2);
+
+            image(i, j, 0) = r;
+            image(i, j, 1) = inv_g;
+            image(i, j, 2) = inv_b;
+        }
+    }
+    return image;
+}
+
 int main() {
     string imageName;
     Image image;
@@ -512,8 +624,10 @@ int main() {
         cout << "11: Resize Image\n";
         cout << "12: Sunlight Image\n";
         cout << "13: Purple filter\n";
-        cout << "14: Save Image\n";
-        cout << "15: Exit\n";
+        cout << "14: Infrared filter\n";
+        cout << "15: Frame filter\n";
+        cout << "16: Save Image\n";
+        cout << "17: Exit\n";
         while (true) {
             string filter;
             getline(cin, filter);
@@ -556,8 +670,12 @@ int main() {
             else if (filter == "13")
                 image = purple_filter(image);
             else if (filter == "14")
-                printImage(image, imageName);
+                image = infrared_filter(image);
             else if (filter == "15")
+                image = frame_filter(image);
+            else if (filter == "16")
+                printImage(image, imageName);
+            else if (filter == "17")
                 return 0;
             else {
                 cout << "Enter a valid option\n";
