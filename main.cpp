@@ -353,36 +353,43 @@ Image crop(Image img, bool print = true, int w0 = 0, int h0 = 0) {
     if(print) {
         string sx, sy, sw, sh;
         while (true) {
-            cout << "the image size is " << img.width << " X " << img.height
-                 << "\nEnter the position x,y where you want to start cropping:\n";
-            cin >> sx >> sy;
-            try {
-                x = stoi(sx);
-                y = stoi(sy);
+            while (true) {
+                cout << "the image size is " << img.width << " X " << img.height
+                     << "\nEnter the position x,y where you want to start cropping:\n";
+                cin >> sx >> sy;
+                try {
+                    x = stoi(sx);
+                    y = stoi(sy);
+                }
+                catch (invalid_argument const &e) {
+                    cout << "Please enter a number!\n";
+                    continue;
+                }
+                if (x > img.width || y > img.height) {
+                    cout << "This exceeds image dimensions!!\n";
+                    continue;
+                }
+                break;
             }
-            catch (invalid_argument const &e) {
-                cout << "Please enter a number!\n";
-                continue;
+            while (true) {
+                cout << "the image size is " << img.width << " X " << img.height
+                     << "\nEnter the dimensions of the new image:\n";
+                cin >> sw >> sh;
+                try {
+                    w = stoi(sw);
+                    h = stoi(sh);
+                }
+                catch (invalid_argument const &e) {
+                    cout << "Please enter a number!\n";
+                    continue;
+                }
+                if (w > img.width || h > img.height) {
+                    cout << "This exceeds image dimensions!!\n";
+                    continue;
+                }
+                break;
             }
-            if (x > img.width || y > img.height) {
-                cout << "This exceeds image dimensions!!\n";
-                continue;
-            }
-            break;
-        }
-        while (true) {
-            cout << "the image size is " << img.width << " X " << img.height
-                 << "\nEnter the dimensions of the new image:\n";
-            cin >> sw >> sh;
-            try {
-                w = stoi(sw);
-                h = stoi(sh);
-            }
-            catch (invalid_argument const &e) {
-                cout << "Please enter a number!\n";
-                continue;
-            }
-            if (w > img.width || h > img.height) {
+            if(w+x>img.width||h+y>img.height){
                 cout << "This exceeds image dimensions!!\n";
                 continue;
             }
@@ -714,6 +721,7 @@ int main() {
         cout << "16: Merge filter\n";
         cout << "17: Save Image\n";
         cout << "18: Exit\n";
+        bool r = false;
         while (true) {
             string filter;
             getline(cin, filter);
@@ -763,13 +771,35 @@ int main() {
                 image = merge(image);
             else if (filter == "17")
                 printImage(image, imageName);
-            else if (filter == "18")
-                return 0;
+            else if (filter == "18"){
+                while (true){
+                    string option;
+                    cout<<"Do you want to save before exit?\n1)Yes\n2)No\n3)Return\n";
+                    getline(cin,option);
+                    if(option=="1"){
+                        printImage(image, imageName);
+                        return 0;
+                    }
+                    else if(option =="2")
+                        return 0;
+                    else if(option =="3"){
+                        r = true;
+                        break;
+                    }
+                    else{
+                        cout << "Enter a valid option\n";
+                        continue;
+                    }
+                }
+            }
             else {
                 cout << "Enter a valid option\n";
                 continue;
             }
             break;
+        }
+        if(r){
+            continue;
         }
     }
 }
