@@ -370,6 +370,10 @@ Image crop(Image img, bool print = true, int w0 = 0, int h0 = 0) {
                     cout << "This exceeds image dimensions!!\n";
                     continue;
                 }
+                if(x < 0 || y<0){
+                    cout<<"Negative numbers in not acceptable!!!"<<endl;
+                    continue;
+                }
                 break;
             }
             while (true) {
@@ -386,6 +390,10 @@ Image crop(Image img, bool print = true, int w0 = 0, int h0 = 0) {
                 }
                 if (w > img.width || h > img.height) {
                     cout << "This exceeds image dimensions!!\n";
+                    continue;
+                }
+                if(w <= 0 || h<= 0){
+                    cout<<"non positive numbers in not acceptable!!!"<<endl;
                     continue;
                 }
                 break;
@@ -436,8 +444,18 @@ Image resize(Image image, bool print = true, int mx_width = 0, int mx_height = 0
                         cout << "Please enter a number!\n";
                         continue;
                     }
-                    w = scale * image.width;
-                    h = scale * image.height;
+                    if(scale<0){
+                        cout<<"There is no Negative scale!!"<<endl;
+                        continue;
+                    }
+                    if(scale==0){
+                        w = image.width;
+                        h = image.height;
+                    }
+                    else {
+                        w = scale * image.width;
+                        h = scale * image.height;
+                    }
                     break;
                 }
             } else if (choice == "2") {
@@ -451,6 +469,10 @@ Image resize(Image image, bool print = true, int mx_width = 0, int mx_height = 0
                     }
                     catch (invalid_argument const &e) {
                         cout << "Please enter a number!\n";
+                        continue;
+                    }
+                    if(w<=0||h<=0){
+                        cout<<"Make sure the dimension is only positive numbers!!"<<endl;
                         continue;
                     }
                     break;
