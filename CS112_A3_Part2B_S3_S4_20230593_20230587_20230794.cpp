@@ -444,18 +444,14 @@ Image resize(Image image, bool print = true, int mx_width = 0, int mx_height = 0
                         cout << "Please enter a number!\n";
                         continue;
                     }
-                    if(scale<0){
+                    if(scale<=0){
                         cout<<"There is no Negative scale!!"<<endl;
                         continue;
                     }
-                    if(scale==0){
-                        w = image.width;
-                        h = image.height;
-                    }
-                    else {
-                        w = scale * image.width;
-                        h = scale * image.height;
-                    }
+
+                    w = scale * image.width;
+                    h = scale * image.height;
+
                     break;
                 }
             } else if (choice == "2") {
