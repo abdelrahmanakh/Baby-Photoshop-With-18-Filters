@@ -1,14 +1,14 @@
 /*
- * FCAI – Structured Programming – 2024 - Assignment 3 - Part 1
- * Program Name: CS112_A3_Part1_S3_S4_20230593_20230587_20230794.cpp
+ * FCAI – Structured Programming – 2024 - Assignment 3 - Part 2-B
+ * Program Name: CS112_A3_Part2B_S3_S4_20230593_20230587_20230794.cpp
  * Program Description: Image Filter Program
- * Last Modification Date: 27/03/2024
+ * Last Modification Date: 15/04/2024
  * Authors: Abdelrahman Ahmed Samir Mohamed Ali, 20230593, Group:A, Sec.no:3
  *          Saleem Sami Saleem Aljerjawi, 20230794, Group:A, Sec.no:4
  *          Mazen Mohamed Abdelsalam Ali Elsheikh, 20230587, Group:A, Sec.no:4
  * TA:      Ahmed Foad Lotfy
  * Who did what: Mazen: The Menu of the previous delivery & Print function & Grayscale Filter & Lighten and Darken filter & Edge detection & Merge filter
- *               Abdelrahman: the menu of this delivery & flip  & black_and_white & Crop & Resize & Purple Filters
+ *               Abdelrahman: the menu of this delivery & flip & black_and_white & Crop & Resize & Purple Filters
  *               Saleem: Invert & Rotate & Frame & Blur & Infrared Filters
  * Emails:
  *        Mazen: 11410120230587@stud.cu.edu.eg
@@ -16,6 +16,7 @@
  *        Saleem: 20230794@stud.fci-cu.edu.eg
  *
  *  Diagram scheme: https://drive.google.com/file/d/1L_iB-lvYQEwGHlE6Cb8cBRx88ubM7oru/view?usp=drive_link
+ *  Repo link: https://github.com/abdelrahmanakh/Assignment_3.git
 */
 #include <iostream>
 #include <cstdlib>
@@ -369,6 +370,10 @@ Image crop(Image img, bool print = true, int w0 = 0, int h0 = 0) {
                     cout << "This exceeds image dimensions!!\n";
                     continue;
                 }
+                if(x < 0 || y<0){
+                    cout<<"Negative numbers in not acceptable!!!"<<endl;
+                    continue;
+                }
                 break;
             }
             while (true) {
@@ -385,6 +390,10 @@ Image crop(Image img, bool print = true, int w0 = 0, int h0 = 0) {
                 }
                 if (w > img.width || h > img.height) {
                     cout << "This exceeds image dimensions!!\n";
+                    continue;
+                }
+                if(w <= 0 || h<= 0){
+                    cout<<"non positive numbers in not acceptable!!!"<<endl;
                     continue;
                 }
                 break;
@@ -435,8 +444,18 @@ Image resize(Image image, bool print = true, int mx_width = 0, int mx_height = 0
                         cout << "Please enter a number!\n";
                         continue;
                     }
-                    w = scale * image.width;
-                    h = scale * image.height;
+                    if(scale<0){
+                        cout<<"There is no Negative scale!!"<<endl;
+                        continue;
+                    }
+                    if(scale==0){
+                        w = image.width;
+                        h = image.height;
+                    }
+                    else {
+                        w = scale * image.width;
+                        h = scale * image.height;
+                    }
                     break;
                 }
             } else if (choice == "2") {
@@ -450,6 +469,10 @@ Image resize(Image image, bool print = true, int mx_width = 0, int mx_height = 0
                     }
                     catch (invalid_argument const &e) {
                         cout << "Please enter a number!\n";
+                        continue;
+                    }
+                    if(w<=0||h<=0){
+                        cout<<"Make sure the dimension is only positive numbers!!"<<endl;
                         continue;
                     }
                     break;
